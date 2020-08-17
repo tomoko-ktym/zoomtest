@@ -4684,8 +4684,10 @@ $.EventSource.prototype = {
      * @private
      * @inner
      */
+  
     function onClick( tracker, event ) {
         if ( tracker.clickHandler ) {
+           //console.log("clicled");
             $.cancelEvent( event );
         }
     }

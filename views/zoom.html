@@ -9,9 +9,11 @@
     
     <!-- import the webpage's stylesheet -->
     <!--script src="/openseadragon.js"></script-->
-    <script src="https://cdn.jsdelivr.net/npm/openseadragon/build/openseadragon/openseadragon.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/openseadragon/build/openseadragon/openseadragon.min.js"></script-->
     <!-- import the webpage's javascript file -->
-    <script src="/openseadragon-html-overlay.js"></script>
+    <script src="/openseadragon.js"></script>
     <!--script src="/script.js" defer></script-->
      <style type="text/css">
 
@@ -40,40 +42,102 @@
 
             .image-overlay {
                 position: absolute;
-                left: 4000px;
-                top: 500px;
-                width: 1000px;
-                height: 1000px;
-                cursor: pointer;
+                left: 50%;
+                top: 50%;
+                width: 100px;
+                height: 100px;
             }
 
+       /*
+       #overlay-rotation-exact{
+         background-color: rgba(255,0,0,0.5);
+       }
+       
+       #overlay-rotation-bounding-box{
+         background-color: rgba(0,255,0,0.5);
+       }
+       */
+       .openseadragon-overlay{
+         background-color: rgba(0,255,0,0.5);
+       }
         </style>
   </head>  
   <body>
     <h1>Hi there! こんにちは</h1>
-    <!--img src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2F149b04961ed4b98fd0b0370f6da4c494-sticker.png?v=1596691730064"-->
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <!--div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js" defer></script-->
-   
     <!-- 画像ビューアを表示させるDIV -->
-    <div id="contentDiv" class="openseadragon1" style="width: 1200px; height: 900px;"></div> 
-        <div class="text-overlay">
-            <h1>Hello!</h1>
-            <p>Lorem ipsum <a href="https://openseadragon.github.io" target="_blank">dolor sit amet</a>, consectetur adipiscing elit. Mauris faucibus nec ex et feugiat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla ut dignissim nisl.</p>
-            <p>Nam aliquam sem ut est hendrerit, a lobortis risus maximus. Nam tortor magna, tristique id sem a, faucibus tincidunt sem. Nulla hendrerit tortor at semper convallis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.</p>
-        </div>
-    <img class="image-overlay" src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2Fopenseadragonlogo-transparent.png?v=1597397883224">
+    <div id="contentDiv" class="openseadragon1" ></div> 
+    <img id="popup" class="image-overlay"  src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2Fopenseadragonlogo-transparent.png?v=1597397883224">
     <script type="text/javascript">
     // Example
-    function init() {
+    //function init() {
+    var socket = io();
+      
     var viewer = OpenSeadragon({
         id:              "contentDiv",
         prefixUrl:       "/images/",
-        tileSources:     "/helloworld.dzi"
+        showNavigator:  true,
+        tileSources:     "/helloworld.dzi",
+        overlays: [{
+        id: 'overlay-rotation-exact', // red overlay
+        x: 0.1,
+        y: 0.1,
+        width: 0.1,
+        height: 0.1,
+        rotationMode: OpenSeadragon.OverlayRotationMode.EXACT
+    }, {
+        id: 'overlay-example', // green overlay
+        x: 0.3,
+        y: 0.3,
+        width: 0.1,
+        height: 0.1,
+    }]
+    }).addOnceHandler('open', function(event) {
+      
+    //for 文でイベントリスナーを登録
+    new OpenSeadragon.MouseTracker({
+        element: 'overlay-example',
+        clickHandler: function(event) {
+          alert("!!");
+          //socket.emit('message', "selected!");
+        }
     });
-       
+    new OpenSeadragon.MouseTracker({
+        element: 'overlay-rotation-exact',
+        clickHandler: function(event) {
+          alert("!!!");
+          //socket.emit('message', "selected!");
+        }
+    });
+    });
+      
+      
+    $(function(){
+        socket.on('message',function(msg){
+            $('#popup').css('visibility','hidden'); 
+          alert(msg);      
+          });
+      });
+      
+   
+      
+    /*
+    $(function() {
+    $('#overlay-example').click = function() {
+      console.log("click!!!");
+      socket.emit('message', "selected!");
+    };
+    });
+    
+    
+      $(function(){
+        socket.on('message',function(msg){
+            $('.image-overlay').css('visibility','hidden'); 
+          alert(msg);
+          
+          });
+      });*/
+      
+    /*
     var overlay = viewer.htmlOverlay();
     overlay.element().appendChild(document.querySelector('.text-overlay'));
     var imageOverlay = document.querySelector('.image-overlay');
@@ -83,7 +147,7 @@
     });
     }
      
-    init();
+    init();*/
     </script>
   </body>
 </html>

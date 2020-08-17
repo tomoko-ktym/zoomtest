@@ -6,6 +6,14 @@
 const express = require("express");
 const app = express();
 
+// listen for requests :)
+const listener = app.listen(process.env.PORT, () => {
+  console.log("Your app is listening on port " + listener.address().port);
+});
+
+
+const io = require('socket.io')(listener);
+
 // our default array of dreams
 const dreams = [
   "Find and count some sheep",
@@ -22,6 +30,18 @@ app.get("/", (request, response) => {
   response.sendFile(__dirname + "/views/zoom.html");
 });
 
+//test socket.io
+io.on('connection',function(socket){
+  console.log('connected');
+  socket.on('message',function(msg){
+    console.log('message: ' + msg);
+    io.emit('message', msg);
+    socket.broadcast.emit('message',msg+"from other");
+ 
+    });
+});
+
+
 // send the default array of dreams to the webpage
 app.get("/dreams", (request, response) => {
   // express helps us take JS objects and send them as JSON
@@ -29,6 +49,7 @@ app.get("/dreams", (request, response) => {
 });
 
 // listen for requests :)
-const listener = app.listen(process.env.PORT, () => {
+/*const listener = app.listen(process.env.PORT, () => {
   console.log("Your app is listening on port " + listener.address().port);
 });
+*/
