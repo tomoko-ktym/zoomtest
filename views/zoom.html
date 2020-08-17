@@ -58,12 +58,7 @@
     <script src="https://button.glitch.me/button.js" defer></script-->
    
     <!-- 画像ビューアを表示させるDIV -->
-    <div id="contentDiv" class="openseadragon1" style="width: 1200px; height: 900px;"></div> 
-        <div class="text-overlay">
-            <h1>Hello!</h1>
-            <p>Lorem ipsum <a href="https://openseadragon.github.io" target="_blank">dolor sit amet</a>, consectetur adipiscing elit. Mauris faucibus nec ex et feugiat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla ut dignissim nisl.</p>
-            <p>Nam aliquam sem ut est hendrerit, a lobortis risus maximus. Nam tortor magna, tristique id sem a, faucibus tincidunt sem. Nulla hendrerit tortor at semper convallis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.</p>
-        </div>
+    <div id="contentDiv" class="openseadragon1"></div> 
     <img class="image-overlay" src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2Fopenseadragonlogo-transparent.png?v=1597397883224">
     <script type="text/javascript">
     // Example
@@ -72,15 +67,14 @@
         id:              "contentDiv",
         prefixUrl:       "/images/",
         tileSources:     "/helloworld.dzi"
+        showNavigator:  true,
     });
        
-    var overlay = viewer.htmlOverlay();
-    overlay.element().appendChild(document.querySelector('.text-overlay'));
-    var imageOverlay = document.querySelector('.image-overlay');
-    overlay.element().appendChild(imageOverlay);
+    
     overlay.onClick(imageOverlay, function() {
       alert('Hello!');
     });
+
     }
      
     init();
