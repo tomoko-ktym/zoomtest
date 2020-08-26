@@ -11,8 +11,8 @@ const listener = app.listen(process.env.PORT, () => {
   console.log("Your app is listening on port " + listener.address().port);
 });
 
-
 const io = require('socket.io')(listener);
+
 
 // our default array of dreams
 const dreams = [
@@ -30,15 +30,26 @@ app.get("/", (request, response) => {
   response.sendFile(__dirname + "/views/zoom.html");
 });
 
+
 //test socket.io
 io.on('connection',function(socket){
   console.log('connected');
+  
+  socket.on('room',function(roomid){
+    console.log('room: ' + roomid);
+    socket.join(roomid); 
+    });
+  
   socket.on('message',function(msg){
     console.log('message: ' + msg);
-    io.emit('message', msg);
-    socket.broadcast.emit('message',msg+"from other");
+    //var data = JSON.parse(msg); // 文字列→JSON 
+    //console.log('message: ' + data);
+    //io.emit('message', data.name);
+    socket.broadcast.emit('message',msg);
+    //io.to(data.room).emit('message', data.room);
  
     });
+  
 });
 
 
@@ -49,7 +60,6 @@ app.get("/dreams", (request, response) => {
 });
 
 // listen for requests :)
-/*const listener = app.listen(process.env.PORT, () => {
-  console.log("Your app is listening on port " + listener.address().port);
-});
-*/
+//const listener = app.listen(process.env.PORT, () => {
+//  console.log("Your app is listening on port " + listener.address().port);
+//});

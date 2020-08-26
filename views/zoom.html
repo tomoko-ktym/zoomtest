@@ -8,146 +8,152 @@
     <title>Hello!</title>
     
     <!-- import the webpage's stylesheet -->
-    <!--script src="/openseadragon.js"></script-->
-    <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/openseadragon.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <!--script src="https://cdn.jsdelivr.net/npm/openseadragon/build/openseadragon/openseadragon.min.js"></script-->
     <!-- import the webpage's javascript file -->
-    <script src="/openseadragon.js"></script>
     <!--script src="/script.js" defer></script-->
      <style type="text/css">
 
-            html,
-            body,
-            .openseadragon1 {
+        html,
+        body,
+        .openseadragon1 {
                 width: 100%;
                 height: 100%;
                 margin: 0;
             }
-
-            .text-overlay {
-                position: absolute;
-                left: 1000px;
-                top: 500px;
-                width: 3000px;
-                font-size: 175px;
-                font-family: sans-serif;
-                color: white;
-                text-shadow: 30px 30px 15px rgba(0, 0, 0, 0.5);
-            }
-
-            .text-overlay a {
-                color: #DDF;
-            }
-
-            .image-overlay {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 100px;
-                height: 100px;
-            }
-
-       /*
-       #overlay-rotation-exact{
-         background-color: rgba(255,0,0,0.5);
-       }
        
-       #overlay-rotation-bounding-box{
-         background-color: rgba(0,255,0,0.5);
+       .popup {
+        display: none;
+        height: 100vh;
+        width: 100%;
+        background: black;
+        opacity: 0.9;
+        position: fixed;
+        top: 0;
+        left: 0;
+        }
+ 
+       .popup_content{
+        background: #fff;
+        padding: 30px;
+        width: 50%;
+        }
+       
+       .popup_show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+       
+       #overlay-rotation-exact {
+        background-color: rgb(255,0,0,0.5);
        }
-       */
-       .openseadragon-overlay{
-         background-color: rgba(0,255,0,0.5);
-       }
+
         </style>
   </head>  
   <body>
-    <h1>Hi there! こんにちは</h1>
+    <!--img src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2F149b04961ed4b98fd0b0370f6da4c494-sticker.png?v=1596691730064"-->
+    <!-- include the Glitch button to show what the webpage is about and
+          to make it easier for folks to view source and remix -->
+    <!--div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js" defer></script--> 
+    <!--button>ポップアップ表示</button-->
+    <div id="contentDiv" class="openseadragon1"></div> 
+    <div class="popup" id="name_popup">
+      <div class="popup_content">
+        <form id="enter_form">
+        <label>
+          名前を入力してください
+          <input id="nameid" type="text" maxlength="100" required placeholder="NAME!">
+        </label>
+        <button id="submit">入室</button>
+      </form>
+      </div>   
+    </div>
+    <div class="popup" id="selected_popup">
+      <div class="popup_content">
+        <p>このカードを選択しますか？</p>
+        <button id="selected_popup_close">はい</button>
+      </div>   
+    </div>
+    <div class="popup" id="alert_popup">
+      <div class="popup_content">
+        <p id="msg">メンバーがカードを選択しました</p>
+        <button id="alert_popup_close">閉じる</button>
+      </div>   
+    </div>
     <!-- 画像ビューアを表示させるDIV -->
-    <div id="contentDiv" class="openseadragon1" ></div> 
-    <img id="popup" class="image-overlay"  src="https://cdn.glitch.com/79199bec-e5b8-4613-972f-ea2c8d85325c%2Fopenseadragonlogo-transparent.png?v=1597397883224">
     <script type="text/javascript">
     // Example
-    //function init() {
     var socket = io();
-      
+    var name;
+    
+    $('#name_popup').addClass('popup_show').fadeIn();
+    
     var viewer = OpenSeadragon({
         id:              "contentDiv",
         prefixUrl:       "/images/",
-        showNavigator:  true,
         tileSources:     "/helloworld.dzi",
+        showNavigator:  true,
         overlays: [{
-        id: 'overlay-rotation-exact', // red overlay
-        x: 0.1,
-        y: 0.1,
-        width: 0.1,
-        height: 0.1,
-        rotationMode: OpenSeadragon.OverlayRotationMode.EXACT
-    }, {
-        id: 'overlay-example', // green overlay
-        x: 0.3,
-        y: 0.3,
-        width: 0.1,
-        height: 0.1,
+        id: 'overlay-rotation-exact', // Green overlay
+        x: ((5900+990)/7000),
+        y: (3496/7000),
+        width: 50/7000,
+        height: 50/6000,
     }]
-    }).addOnceHandler('open', function(event) {
-      
-    //for 文でイベントリスナーを登録
-    new OpenSeadragon.MouseTracker({
-        element: 'overlay-example',
-        clickHandler: function(event) {
-          alert("!!");
-          //socket.emit('message', "selected!");
-        }
     });
+         
+    viewer.addHandler('open', function(event) {
     new OpenSeadragon.MouseTracker({
         element: 'overlay-rotation-exact',
-        clickHandler: function(event) {
-          alert("!!!");
-          //socket.emit('message', "selected!");
+        clickHandler: function(event) {     
+        $('#selected_popup').addClass('popup_show').fadeIn();
+          //movetocard();
+          //var box1 = new OpenSeadragon.Rect(5900/7000,3496/7000 ,1040/7000 ,720/6000);
+          //viewer.viewport.fitBounds(box1);
         }
     });
     });
       
+    socket.on('message',function(msg){
+      $('#msg').text(msg+"がカードを選択しました");
+      $('#alert_popup').addClass('popup_show').fadeIn();
+    });
       
-    $(function(){
-        socket.on('message',function(msg){
-            $('#popup').css('visibility','hidden'); 
-          alert(msg);      
-          });
-      });
-      
+    $('#submit').click(function(e){
+          name = $('#nameid').val();
+          $('.popup').fadeOut();
+      　　return e.preventDefault();
+    }); 
    
       
-    /*
-    $(function() {
-    $('#overlay-example').click = function() {
-      console.log("click!!!");
-      socket.emit('message', "selected!");
-    };
+    $('#selected_popup_close').on('click',function(){
+      $('.popup').fadeOut();
+      socket.emit('message', name); 
+      movetocard ();
     });
-    
-    
-      $(function(){
-        socket.on('message',function(msg){
-            $('.image-overlay').css('visibility','hidden'); 
-          alert(msg);
-          
-          });
-      });*/
       
-    /*
-    var overlay = viewer.htmlOverlay();
-    overlay.element().appendChild(document.querySelector('.text-overlay'));
-    var imageOverlay = document.querySelector('.image-overlay');
-    overlay.element().appendChild(imageOverlay);
-    overlay.onClick(imageOverlay, function() {
-      alert('Hello!');
+    $('#alert_popup_close').on('click',function(){
+      $('.popup').fadeOut();
+      movetocard ();  
     });
+      
+    function movetocard(){
+      var box1 = new OpenSeadragon.Rect(5900/7000,3496/7000 ,1040/7000 ,720/6000);
+      viewer.viewport.fitBounds(box1);
     }
-     
-    init();*/
+    /*
+    $('button').on('click',function(){
+    $('#name_popup').addClass('popup_show').fadeIn();
+});*/
+    //function init(){
+     // $('#name_popup').addClass('popup_show').fadeIn();
+    //}
+      
     </script>
   </body>
 </html>
